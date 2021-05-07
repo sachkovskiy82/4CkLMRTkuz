@@ -1,0 +1,233 @@
+<html>
+
+<head>
+	<title>WebRadar</title>
+</head>
+
+<body style="width:1024;height:1024;margin-left:0;margin-top:0;">
+	<img src="https://aimjoke-js.oss-accelerate.aliyuncs.com/Solid_black.png" style="width:1024px;height:1024px;position:absolute;" id="mapimg"></img>
+	<canvas id="drawCanvas" style="width:1024px;height:1024px;position:absolute;z-index:10000;"></canvas>
+
+	<script src="https://aimjoke-js.oss-accelerate.aliyuncs.com/jquery.min.js"></script>
+	<script src="http://radar.jkslive.vip/vdf.js"></script>
+	<script>
+		var currentMap = '';
+		var currentMapData = {};
+
+		function onMapChange(newMapName) {
+			currentMap = newMapName;
+
+			if (newMapName.length <= 1) {
+				$('#mapimg').attr('src', 'https://aimjoke-js.oss-accelerate.aliyuncs.com/Solid_black.png');
+
+				var c = document.getElementById("drawCanvas");
+				var context = c.getContext("2d");
+				context.clearRect(0, 0, c.width, c.height);
+				context.fillStyle = 'white';
+				context.font = "64px Arial";
+				context.fillText("Not connected", 70, 70);
+			}
+			else {
+				console.log('Map changed to: ' + newMapName);
+				$('#mapimg').attr('src', 'http://radar.jkslive.vip/cn/' + newMapName + '_radar.png');
+                
+				$.ajax('http://radar.jkslive.vip/txt/' + newMapName + '.txt', { async: false }).done(function (data) {
+					currentMapData = VDF.parse(data);
+				});
+			}
+		}
+
+		function WorldToRadar(x, y) {
+			var c = document.getElementById("drawCanvas");
+
+			x -= parseFloat(currentMapData[currentMap]['pos_x']);
+			y -= parseFloat(currentMapData[currentMap]['pos_y']);
+
+			var scale = parseFloat(currentMapData[currentMap]['scale']);
+			x /= scale;
+			y /= scale;
+			x /= 1024.0;
+			y /= 1024.0;
+
+			y *= -1.0;
+
+			x *= c.width;
+			y *= c.height;
+
+			return { x: x, y: y };
+		}
+
+		$(document).ready(function () {
+			var canvas = document.getElementById('drawCanvas');
+			canvas.width = 2048;
+			canvas.height = 2048;
+
+			onMapChange('');
+			var lastPositions = {};
+
+			setInterval(function () {
+				/*if(!document.hasFocus()) {
+					return;
+				}*/
+
+				$.ajax('/info', { async: false }).done(function (data) {
+					try {
+						if (currentMap != data.map) {
+							onMapChange(data.map);
+						}
+
+						if (data.map.length > 1 && typeof (data.entities) !== 'undefined' && data.entities !== null && data.entities.length > 0) {
+							var c = document.getElementById("drawCanvas");
+							var context = c.getContext("2d");
+
+							// clear image
+							context.clearRect(0, 0, c.width, c.height);
+
+							var localIndex = 0;
+							var localTeam = 0;
+
+							for (var i = 0; i < data.entities.length; i++) {
+								if (data.entities[i].local) {
+									localIndex = i;
+									localTeam = data.entities[i].team;
+									break;
+								}
+							}
+
+							for (var i = 0; i < data.entities.length; i++) {
+								if (!data.entities[i].alive) {
+									continue;
+								}
+
+								var coords = WorldToRadar(parseFloat(data.entities[i].origin_x), parseFloat(data.entities[i].origin_y));
+								var coordsForward = WorldToRadar(parseFloat(data.entities[i].forward_x), parseFloat(data.entities[i].forward_y));
+
+								function drawStroked(text, x, y, px = 32, fill = 'white') {
+									context.font = px + 'px Arial';
+									context.strokeStyle = 'black';
+									context.lineWidth = 4;
+									context.strokeText(text, x, y);
+									context.fillStyle = fill;
+									context.fillText(text, x, y);
+								}
+
+								if (data.entities[i].type === "player") {
+									var enemy = data.entities[i].team != localTeam ? true : false;
+
+									// Basic interpolation
+									if (typeof (lastPositions[data.entities[i].index]) !== 'undefined') {
+										var oldPosition = lastPositions[data.entities[i].index];
+										coords.x = oldPosition.x + (coords.x - oldPosition.x) / 2;
+										coords.y = oldPosition.y + (coords.y - oldPosition.y) / 2;
+									}
+
+									context.save();
+									// Draw view direction
+									context.strokeStyle = enemy ? 'red' : data.entities[i].color;
+									context.beginPath();
+									context.moveTo(coords.x, coords.y);
+									context.lineWidth = 5;
+									context.lineTo(coordsForward.x, coordsForward.y);
+									context.stroke();
+									context.lineWidth = 0.1;
+
+									// Draw player dot
+									context.beginPath();
+									context.fillStyle = 'white';
+									context.arc(coords.x, coords.y, 16, 0, 2 * Math.PI);
+									context.fill();
+									context.stroke();
+
+									context.beginPath();
+									context.fillStyle = enemy ? 'red' : data.entities[i].color;
+									context.arc(coords.x, coords.y, 12.5, 0, 2 * Math.PI);
+									context.fill();
+									context.stroke();
+
+									// Draw health
+									// var barWidth = 80;
+
+									// context.beginPath();
+									// context.lineWidth = 3;
+									// context.strokeRect(coords.x - 40, coords.y + 25, 80, 10);
+									// context.fillRect(coords.x - 40, coords.y + 25, data.entities[i].health * barWidth / 100.0, 10);
+									// context.lineWidth = 5;
+
+									if (data.entities[i].hasbomb) {
+										context.fillStyle = 'yellow';
+										context.fillRect(coords.x + 16, coords.y, 16, 16);
+									}
+
+									// Draw name
+									context.restore();
+									context.save();
+									context.fillStyle = 'white';
+									context.font = "32px Arial";
+									let textMeasure = context.measureText(data.entities[i].name);
+									drawStroked(data.entities[i].name, coords.x - textMeasure.width / 2, coords.y);
+									context.restore();
+
+									lastPositions[data.entities[i].index] = coords;
+								}
+
+								if (data.entities[i].type === "bomb") {
+									context.fillStyle = 'yellow';
+									context.fillRect(coords.x - 8, coords.y - 8, 16, 16);
+								}
+
+								if (data.entities[i].type === "fire") {
+									let coords_delta = WorldToRadar(parseFloat(data.entities[i].origin_delta_x), parseFloat(data.entities[i].origin_delta_y));
+									let radius = Math.abs(coords_delta.x - coords.x);
+									
+									context.beginPath();
+									context.lineWidth = 1;
+									context.fillStyle = 'rgba(255, 0, 0, 0.3)';
+									context.arc(coords.x, coords.y, radius, 0, 2 * Math.PI);
+									context.fill();
+									context.stroke();
+
+									let time = parseFloat(data.entities[i].time).toFixed(1);
+									let textMeasure = context.measureText(time);
+									drawStroked(time, coords.x - textMeasure.width / 2, coords.y + 10, 28);
+								}
+
+								if (data.entities[i].type === "smoke") {
+									let coords_delta = WorldToRadar(parseFloat(data.entities[i].origin_delta_x), parseFloat(data.entities[i].origin_delta_y));
+									let radius = Math.abs(coords_delta.x - coords.x);
+
+									context.beginPath();
+									context.lineWidth = 1;
+									context.strokeStyle = 'rgba(0, 0, 0, 1)';
+									context.fillStyle = 'rgba(134, 136, 138, 0.3)';
+									context.arc(coords.x, coords.y, radius, 0, 2 * Math.PI);
+									context.fill();
+									context.stroke();
+
+									let time = parseFloat(data.entities[i].time).toFixed(1);
+									let textMeasure = context.measureText(time);
+									drawStroked(time, coords.x - textMeasure.width / 2, coords.y + 10, 28);
+								}
+
+								if(data.entities[i].type === "planted_bomb"){
+									context.fillStyle = 'yellow';
+									context.fillRect(coords.x - 8, coords.y - 8, 16, 16);
+
+									let time = parseFloat(data.entities[i].time).toFixed(1);
+									let damage = parseInt(data.entities[i].damage);
+									let text = `${time}`;
+									let textMeasure = context.measureText(text);
+									drawStroked(text, coords.x - textMeasure.width / 2, coords.y, 28);
+								}
+							}
+						}
+					}
+					catch (e) {
+						console.log(e);
+					}
+				});
+			}, 17);
+		});
+	</script>
+</body>
+
+</html>
