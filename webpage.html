@@ -559,7 +559,7 @@
 
         function FOV(id, spanid) {
             var element = document.querySelector('#' + id);
-            var value = element.value * 1.8;
+            var value = element.value * 0.35;
             value = value.toFixed(1);
             PostMessage(spanid + '=' + value);
             document.querySelector('#' + spanid).innerHTML = value;
@@ -577,6 +577,8 @@
             var element = document.querySelector('#' + id);
             var value = element.value / 100;
             value = value.toFixed(1);
+            if (value < 0.5)
+                value = 0.5
             PostMessage(spanid + '=' + value);
             document.querySelector('#' + spanid).innerHTML = value;
             if (strstr(id, 'rifle'))
@@ -610,10 +612,19 @@
             ons.notification.prompt('&#33258;&#23450;&#20041;').then(function (input) {
                 if (!isNaN(input) && input) {
                     element.innerHTML = (input * 1.0).toFixed(1);
-                    PostMessage(id + '=' + input);
+                    
                     if (strstr(rangeid, 'fov'))
-                        range.value = (input / 1.8).toFixed(1);
-                    if (strstr(rangeid, 'smooth') || strstr(rangeid, 'errm') || strstr(rangeid, 'salt'))
+                        input = input * 1;
+                        if (input > 35)
+                            input = 35;
+                        range.value = (input / 0.35).toFixed(1);
+                    if (strstr(rangeid, 'smooth')) {
+                        input = input * 1.0;
+                        if (input < 0.5)
+                            input = 0.5;
+                        range.value = (input * 100).toFixed(1);
+                    }
+                    if (strstr(rangeid, 'errm') || strstr(rangeid, 'salt'))
                         range.value = (input * 100).toFixed(1);
                     if (strstr(rangeid, 'timeout')) {
                         if (input > 2000)
@@ -623,7 +634,7 @@
                         range.value = parseInt(input / 20);
                         element.innerHTML = parseInt(input);
                     }
-
+                    PostMessage(id + '=' + input);
                     if (strstr(id, 'rifle'))
                         settings.aimbot[0][id] = input;
                     if (strstr(id, 'smg'))
