@@ -369,24 +369,6 @@
                     //page.querySelector('#misc_invertknife_enable').checked = settings.misc.misc_invertknife_enable;
                     //page.querySelector('#misc_radar_enable').checked = settings.misc.misc_radar_enable;
                     break;
-                case 'esp':
-                    page.querySelector('#esp_enable').checked = settings.esp.esp_enable;
-                    page.querySelector('#esp_enemy_enable').checked = settings.esp.esp_enemy_enable;
-                    page.querySelector('#esp_box_enable').checked = settings.esp.esp_box_enable;
-                    page.querySelector('#esp_hpbar_enable').checked = settings.esp.esp_hpbar_enable;
-                    page.querySelector('#esp_hptext_enable').checked = settings.esp.esp_hptext_enable;
-                    page.querySelector('#esp_name_enable').checked = settings.esp.esp_name_enable;
-                    page.querySelector('#esp_weapon_enable').checked = settings.esp.esp_weapon_enable;
-                    page.querySelector('#esp_player_status').checked = settings.esp.esp_player_status;
-                    page.querySelector('#chams_enable').checked = settings.esp.chams_enable;
-                    page.querySelector('#chams_enemy_enable').checked = settings.esp.chams_enemy_enable;
-                    page.querySelector('#chams_visible_only').checked = settings.esp.chams_visible_only;
-                    page.querySelector('#esp_world_nade').checked = settings.esp.esp_world_nade;
-                    page.querySelector('#esp_world_c4').checked = settings.esp.esp_world_c4;
-                    page.querySelector('#esp_event_purchase').checked = settings.esp.esp_event_purchase;
-                    page.querySelector('#esp_event_bomb').checked = settings.esp.esp_event_bomb;
-                    page.querySelector('#esp_netgraph').checked = settings.esp.esp_netgraph;
-                    break;
                 case 'config':
                     var configlist = document.getElementById("config-list");
                     configlist.delegate = {
@@ -421,8 +403,6 @@
                 settings.triggerbot[id] = element.checked;
             if (strstr(id, 'misc'))
                 settings.misc[id] = element.checked;
-            if (strstr(id, 'esp') || strstr(id, 'chams'))
-                settings.esp[id] = element.checked;
         }
 
         //---------------------------------------------------------------------------
@@ -782,8 +762,6 @@
             </ons-toolbar>
 
             <ons-list>
-                <ons-list-item modifier="chevron" tappable onclick="Menu.pushPage('esp.html')">&#x89C6;&#x89C9;
-                </ons-list-item>
                 <ons-list-item modifier="chevron" tappable onclick="Menu.pushPage('aimbot.html')">&#33258;&#30596;
                 </ons-list-item>
                 <ons-list-item modifier="chevron" tappable onclick="Menu.pushPage('trigger.html')">
@@ -1936,124 +1914,6 @@
             </ons-list>
         </ons-page>
     </template>
-    <!-------------------------------------------------------------------------------------------------------------------------------------------------->
-    <template id="esp.html">
-        <ons-page id="esp">
-            <ons-toolbar>
-                <div class="left">
-                    <ons-back-button>&#36820;&#22238;</ons-back-button>
-                </div>
-                <div class="center">&#x900F;&#x89C6;</div>
-                <div class="right">
-                    <ons-button modifier="quiet" onclick="Menu.resetToPage('page0.html', { pop: true })">
-                        &#20027;&#33756;&#21333;</ons-button>
-                </div>
-            </ons-toolbar>
-            <ons-list>
-                <ons-list-header>&#x65B9;&#x6846;&#x900F;&#x89C6;/&#x4FE1;&#x606F;</ons-list-header>
-                <ons-list-item>
-                    <label class="center">&#x603B;&#x5F00;&#x5173;</label>
-                    <div class="right">
-                        <ons-switch id="esp_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x4EC5;&#x9650;&#x654C;&#x4EBA;</label>
-                    <div class="right">
-                        <ons-switch id="esp_enemy_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x65B9;&#x6846;</label>
-                    <div class="right">
-                        <ons-switch id="esp_box_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x8840;&#x6761;</label>
-                    <div class="right">
-                        <ons-switch id="esp_hpbar_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x8840;&#x91CF;&#x6587;&#x672C;</label>
-                    <div class="right">
-                        <ons-switch id="esp_hptext_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x540D;&#x5B57;</label>
-                    <div class="right">
-                        <ons-switch id="esp_name_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x6B66;&#x5668;</label>
-                    <div class="right">
-                        <ons-switch id="esp_weapon_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x72B6;&#x6001;</label>
-                    <div class="right">
-                        <ons-switch id="esp_player_status" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-header>&#x4E8B;&#x4EF6;</ons-list-header>
-                <ons-list-item>
-                    <label class="center">&#x8D2D;&#x5165;&#x7269;&#x54C1;</label>
-                    <div class="right">
-                        <ons-switch id="esp_event_purchase" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x5B89;/&#x62C6;&#x5305;&#x72B6;&#x6001;</label>
-                    <div class="right">
-                        <ons-switch id="esp_event_bomb" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-header>&#x6A21;&#x578B;&#x900F;&#x89C6;</ons-list-header>
-                <ons-list-item>
-                    <label class="center">&#x603B;&#x5F00;&#x5173;</label>
-                    <div class="right">
-                        <ons-switch id="chams_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x4EC5;&#x9650;&#x654C;&#x4EBA;</label>
-                    <div class="right">
-                        <ons-switch id="chams_enemy_enable" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x4EC5;&#x9650;&#x53EF;&#x89C6;</label>
-                    <div class="right">
-                        <ons-switch id="chams_visible_only" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-header>&#x5176;&#x4ED6;</ons-list-header>
-                <ons-list-item>
-                    <label class="center">&#x624B;&#x96F7;</label>
-                    <div class="right">
-                        <ons-switch id="esp_world_nade" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">C4</label>
-                    <div class="right">
-                        <ons-switch id="esp_world_c4" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-                <ons-list-item>
-                    <label class="center">&#x58F0;&#x5450;</label>
-                    <div class="right">
-                        <ons-switch id="esp_netgraph" onchange="SwitchControl(this.id)"></ons-switch>
-                    </div>
-                </ons-list-item>
-            </ons-list>
-        </ons-page>
-    </template>
-
     <!-------------------------------------------------------------------------------------------------------------------------------------------------->
     <template id="config.html">
         <ons-page id="config">
