@@ -557,8 +557,9 @@
             var element = document.querySelector('#' + id);
             var value = element.value / 100;
             value = value.toFixed(1);
-            if (value < 0.5)
-                value = 0.5
+            if (strstr(id, 'smooth'))
+                if (value < 0.5)
+                    value = 0.5
             PostMessage(spanid + '=' + value);
             document.querySelector('#' + spanid).innerHTML = value;
             if (strstr(id, 'rifle'))
@@ -796,6 +797,8 @@
                     &#25163;&#26538;</ons-list-item>
                 <ons-list-item modifier="chevron" tappable onclick="Menu.pushPage('aimbot_sniper.html')">
                     &#29401;&#20987;&#26538;</ons-list-item>
+                <ons-list-item modifier="chevron" tappable onclick="Menu.pushPage('aimbot_sniper.html')">
+                    &#x6563;&#x5F39;</ons-list-item>
             </ons-list>
         </ons-page>
     </template>
@@ -964,7 +967,7 @@
                         </ons-col>
                         <ons-col width="40px" style="text-align: center; line-height: 31px;">
                             <span id="aimbot_rifle_smooth_value"
-                                onclick="TapInput(this.id, 'aimbot_rifle_smooth_range')">0</span>
+                                onclick="TapInput(this.id, 'aimbot_rifle_smooth_range')">0.5</span>
                         </ons-col>
                     </ons-row>
                 </ons-list-item>
@@ -1210,7 +1213,7 @@
                         </ons-col>
                         <ons-col width="40px" style="text-align: center; line-height: 31px;">
                             <span id="aimbot_smg_smooth_value"
-                                onclick="TapInput(this.id, 'aimbot_smg_smooth_range')">0</span>
+                                onclick="TapInput(this.id, 'aimbot_smg_smooth_range')">0.5</span>
                         </ons-col>
                     </ons-row>
                 </ons-list-item>
@@ -1455,7 +1458,7 @@
                         </ons-col>
                         <ons-col width="40px" style="text-align: center; line-height: 31px;">
                             <span id="aimbot_pistol_smooth_value"
-                                onclick="TapInput(this.id, 'aimbot_pistol_smooth_range')">0</span>
+                                onclick="TapInput(this.id, 'aimbot_pistol_smooth_range')">0.5</span>
                         </ons-col>
                     </ons-row>
                 </ons-list-item>
@@ -1700,7 +1703,7 @@
                         </ons-col>
                         <ons-col width="40px" style="text-align: center; line-height: 31px;">
                             <span id="aimbot_sniper_smooth_value"
-                                onclick="TapInput(this.id, 'aimbot_sniper_smooth_range')">0</span>
+                                onclick="TapInput(this.id, 'aimbot_sniper_smooth_range')">0.5</span>
                         </ons-col>
                     </ons-row>
                 </ons-list-item>
@@ -1778,6 +1781,251 @@
                             onchange="SwitchControl(this.id)"></ons-checkbox>
                     </div>
                     <label for="sniper_flash" class="center">&#38378;&#20809;&#26816;&#27979;</label>
+                </ons-list-item>
+            </ons-list>
+        </ons-page>
+    </template>
+    <!-------------------------------------------------------------------------------------------------------------------------------------------------->
+    <template id="aimbot_shotgun.html">
+        <ons-page id="aimbot_shotgun">
+            <ons-toolbar>
+                <div class="left">
+                    <ons-back-button>&#36820;&#22238;</ons-back-button>
+                </div>
+                <div class="center">&#29401;&#20987;&#26538;</div>
+                <div class="right">
+                    <ons-button modifier="quiet" onclick="Menu.resetToPage('page0.html', { pop: true })">
+                        &#20027;&#33756;&#21333;</ons-button>
+                </div>
+            </ons-toolbar>
+            <ons-list>
+                <ons-list-header>&#20027;&#24320;&#20851;</ons-list-header>
+                <ons-list-item>
+                    <label class="center">&#24320;&#21551;</label>
+                    <div class="right">
+                        <ons-switch id="aimbot_shotgun_enable" onchange="SwitchControl(this.id)"></ons-switch>
+                    </div>
+                </ons-list-item>
+                <ons-list-header>&#30446;&#26631;</ons-list-header>
+                <ons-list-item>
+                    <label class="center">&#30596;&#38431;&#21451;</label>
+                    <div class="right">
+                        <ons-switch id="aimbot_shotgun_target_teammate" onchange="SwitchControl(this.id)"></ons-switch>
+                    </div>
+                </ons-list-item>
+                <ons-list-item modifier="chevron" tappable onclick="AimOption('aimbot_shotgun_aim')">
+                    &#30596;&#20934;&#37096;&#20301;
+                    <div class="right"><span id="aimbot_shotgun_aim">&#22836;</span></div>
+                </ons-list-item>
+                <ons-list-item modifier="chevron" tappable onclick="PriorityOption('aimbot_shotgun_priority')">
+                    &#x4F18;&#x5148;&#x90E8;&#x4F4D;
+                    <div class="right"><span
+                            id="aimbot_shotgun_priority">&#x53EA;&#x7528;&#x8BBE;&#x5B9A;&#x90E8;&#x4F4D;</span></div>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <div class="left">
+                        <ons-checkbox id="aimbot_shotgun_ignore_limbs" input-id="shotgun_limbs"
+                            onchange="SwitchControl(this.id)"></ons-checkbox>
+                    </div>
+                    <label for="shotgun_limbs" class="center">&#x5FFD;&#x7565;&#x56DB;&#x80A2;</label>
+                </ons-list-item>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">
+                            &#x51B7;&#x5374;
+                        </ons-col>
+                        <ons-col>
+                            <ons-range style="width: 100%;" value="0" id="aimbot_shotgun_timeout_range"
+                                onchange="SetTimeout(this.id, 'aimbot_shotgun_timeout')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_timeout"
+                                onclick="TapInput(this.id, 'aimbot_shotgun_timeout_range')">0</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-header>&#20934;&#30830;&#24615;</ons-list-header>
+                <ons-list-item>
+                    <label class="center">&#33258;&#21160;&#30596;&#20934;</label>
+                    <div class="right">
+                        <ons-switch id="aimbot_shotgun_autoaim" onchange="SwitchControl(this.id)"></ons-switch>
+                    </div>
+                </ons-list-item>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">
+                            FOV
+                        </ons-col>
+                        <ons-col>
+                            <ons-range style="width: 100%;" value="0" id="aimbot_shotgun_fov_range"
+                                onchange="FOV(this.id, 'aimbot_shotgun_fov')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_fov" onclick="TapInput(this.id, 'aimbot_shotgun_fov_range')">0</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-item modifier="chevron" tappable onclick="RCSOption('aimbot_shotgun_rcs')">
+                    &#21387;&#26538;
+                    <div class="right"><span id="aimbot_shotgun_rcs">&#20851;&#38381;</span></div>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <div class="left">
+                        <ons-checkbox id="aimbot_shotgun_rcs_random" input-id="rifle_rcs_random"
+                            onchange="RCSRandomSwitch(this.id)"></ons-checkbox>
+                    </div>
+                    <label for="rifle_rcs_random" class="center">&#x538B;&#x67AA;&#x968F;&#x673A;</label>
+                </ons-list-item>
+                <ons-list-header>&#x538B;&#x67AA;&#x968F;&#x673A;(&#x7EB5;&#x8F74;)</ons-list-header>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">&#x6700;&#x5C0F;</ons-col>
+                        <ons-col>
+                            <ons-range disabled style="width: 100%;" value="0" id="aimbot_shotgun_rcs_x_min"
+                                onchange="RCSRandomVal(this.id, 'aimbot_shotgun_rcs_text_x_min')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_rcs_text_x_min"
+                                onclick="RCSRandomTapInput(this.id, 'aimbot_shotgun_rcs_x_min')">0%</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">&#x6700;&#x5927;</ons-col>
+                        <ons-col>
+                            <ons-range disabled style="width: 100%;" value="0" id="aimbot_shotgun_rcs_x_max"
+                                onchange="RCSRandomVal(this.id, 'aimbot_shotgun_rcs_text_x_max')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_rcs_text_x_max"
+                                onclick="RCSRandomTapInput(this.id, 'aimbot_shotgun_rcs_x_max')">0%</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-header>&#x538B;&#x67AA;&#x968F;&#x673A;(&#x6A2A;&#x8F74;)</ons-list-header>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">&#x6700;&#x5C0F;</ons-col>
+                        <ons-col>
+                            <ons-range disabled style="width: 100%;" value="0" id="aimbot_shotgun_rcs_y_min"
+                                onchange="RCSRandomVal(this.id, 'aimbot_shotgun_rcs_text_y_min')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_rcs_text_y_min"
+                                onclick="RCSRandomTapInput(this.id, 'aimbot_shotgun_rcs_y_min')">0%</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">&#x6700;&#x5927;</ons-col>
+                        <ons-col>
+                            <ons-range disabled style="width: 100%;" value="0" id="aimbot_shotgun_rcs_y_max"
+                                onchange="RCSRandomVal(this.id, 'aimbot_shotgun_rcs_text_y_max')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_rcs_text_y_max"
+                                onclick="RCSRandomTapInput(this.id, 'aimbot_shotgun_rcs_y_max')">0%</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-header>&#25311;&#20154;&#21270;</ons-list-header>
+                <ons-list-item>
+                    <label class="center">&#24179;&#28369;</label>
+                    <div class="right">
+                        <ons-switch id="aimbot_shotgun_smooth" onchange="SwitchControl(this.id)"></ons-switch>
+                    </div>
+                </ons-list-item>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">
+                            &#24179;&#28369;&#24230;
+                        </ons-col>
+                        <ons-col>
+                            <ons-range style="width: 100%;" value="0" id="aimbot_shotgun_smooth_range"
+                                onchange="SmoothFns(this.id, 'aimbot_shotgun_smooth_value')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_smooth_value"
+                                onclick="TapInput(this.id, 'aimbot_shotgun_smooth_range')">0.5</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-item>
+                    <label class="center">&#24179;&#28369;&#38543;&#26426;</label>
+                    <div class="right">
+                        <ons-switch id="aimbot_shotgun_salt" onchange="SwitchControl(this.id)"></ons-switch>
+                    </div>
+                </ons-list-item>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">
+                            &#38543;&#26426;&#24615;
+                        </ons-col>
+                        <ons-col>
+                            <ons-range style="width: 100%;" value="0" id="aimbot_shotgun_salt_range"
+                                onchange="SmoothFns(this.id, 'aimbot_shotgun_salt_value')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_salt_value"
+                                onclick="TapInput(this.id, 'aimbot_shotgun_salt_range')">0</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-item>
+                    <label class="center">&#33258;&#30596;&#35823;&#24046;</label>
+                    <div class="right">
+                        <ons-switch id="aimbot_shotgun_errmargin" onchange="SwitchControl(this.id)"></ons-switch>
+                    </div>
+                </ons-list-item>
+                <ons-list-item>
+                    <ons-row>
+                        <ons-col width="50px" style="text-align: left; line-height: 31px;">
+                            &#35823;&#24046;
+                        </ons-col>
+                        <ons-col>
+                            <ons-range style="width: 100%;" value="0" id="aimbot_shotgun_errm_range"
+                                onchange="SmoothFns(this.id, 'aimbot_shotgun_errm_value')"></ons-range>
+                        </ons-col>
+                        <ons-col width="40px" style="text-align: center; line-height: 31px;">
+                            <span id="aimbot_shotgun_errm_value"
+                                onclick="TapInput(this.id, 'aimbot_shotgun_errm_range')">0</span>
+                        </ons-col>
+                    </ons-row>
+                </ons-list-item>
+                <ons-list-item modifier="chevron" tappable onclick="SmoothOption('aimbot_shotgun_smoothtype')">
+                    &#24179;&#28369;&#31867;&#22411;
+                    <div class="right"><span id="aimbot_shotgun_smoothtype">&#24930;&#36895;&#25509;&#36817;</span></div>
+                </ons-list-item>
+                <ons-list-header>&#20854;&#20182;</ons-list-header>
+                <ons-list-item tappable>
+                    <div class="left">
+                        <ons-checkbox id="aimbot_shotgun_smoke" input-id="shotgun_smoke"
+                            onchange="SwitchControl(this.id)"></ons-checkbox>
+                    </div>
+                    <label for="shotgun_smoke" class="center">&#28895;&#38654;&#26816;&#27979;</label>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <div class="left">
+                        <ons-checkbox id="aimbot_shotgun_prediction" input-id="shotgun_pred"
+                            onchange="SwitchControl(this.id)"></ons-checkbox>
+                    </div>
+                    <label for="shotgun_pred" class="center">&#39044;&#21028;</label>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <div class="left">
+                        <ons-checkbox id="aimbot_shotgun_ignore_jump" input-id="shotgun_jump"
+                            onchange="SwitchControl(this.id)"></ons-checkbox>
+                    </div>
+                    <label for="shotgun_jump" class="center">&#24573;&#30053;&#36339;&#36291;</label>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <div class="left">
+                        <ons-checkbox id="aimbot_shotgun_flash" input-id="shotgun_flash"
+                            onchange="SwitchControl(this.id)"></ons-checkbox>
+                    </div>
+                    <label for="shotgun_flash" class="center">&#38378;&#20809;&#26816;&#27979;</label>
                 </ons-list-item>
             </ons-list>
         </ons-page>
